@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtCityName"
-        android:text="Stuttgart"
-        android:layout_marginStart="8dp"
+        android:text=""
+        android:layout_marginStart="15dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:textSize="22sp"
@@ -18,8 +19,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtDate"
-        android:text="12 September, Sunday"
-        android:layout_marginStart="8dp"/>
+        android:text=""
+        android:layout_marginStart="15dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="18*"
+                android:text=""
                 android:textSize="42sp"
                 android:textStyle="bold"
                 android:layout_centerInParent="true"
@@ -42,8 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtWeatherCode"
-                android:text="Slightly cloudy"
-                android:layout_marginStart="8dp"
+                android:text=""
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="8dp"/>
@@ -87,7 +87,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10 m/s"
+                    android:text=""
                     android:layout_below="@+id/imgWind"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="3dp"
@@ -117,7 +117,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10 bars"
+                    android:text=""
                     android:layout_below="@+id/imgPressure"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="3dp"
@@ -147,7 +147,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10%"
+                    android:text=""
                     android:layout_below="@+id/imgHumidity"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="3dp"
@@ -163,5 +163,31 @@
             </RelativeLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.tabs.TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:tabMode="fixed"
+        android:layout_margin="10dp">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today"
+            />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tomorrow"
+            />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next 5 days"
+            />
+
+    </com.google.android.material.tabs.TabLayout>
 
 </LinearLayout>

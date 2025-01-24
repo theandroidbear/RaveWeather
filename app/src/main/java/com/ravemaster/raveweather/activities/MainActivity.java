@@ -14,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.ravemaster.raveweather.GetIcon;
 import com.ravemaster.raveweather.R;
 import com.ravemaster.raveweather.api.RequestManager;
 import com.ravemaster.raveweather.api.getWeather.interfaces.GetWeatherListener;
@@ -48,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
         //api calling
         requestManager = new RequestManager(this);
         requestManager.getWeatherData(listener,"40.7128","-74.0060");
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestManager.getWeatherData(listener,"40.7128","-74.0060");
+            }
+        });
     }
 
     //api listener
@@ -120,19 +128,18 @@ public class MainActivity extends AppCompatActivity {
     //data displayed via views here
     private void showData(WeatherDataResponse response) {
 
-        //load all images/weather icons
-        Glide
-                .with(MainActivity.this)
-                .load("https://openweathermap.org/img/wn/"+response.weather.get(0).icon+"@2x.png")
-                .into(imgWeather);
+        GetIcon getIcon = new GetIcon(MainActivity.this);
+        imgWeather.setBackgroundResource(getIcon.getIcon(response.weather.get(0).icon));
 
-        txtCity.setText("New York");
+        txtCity.setText(response.name);
         txtDate.setText(getDate(response.dt));
-        txtTemperature.setText(String.valueOf(getTemperature(response.main.temp)));
+        double Temp = getTemperature(response.main.temp);
+        String formatedTemp = String.format("%.1f", Temp);
+        txtTemperature.setText(formatedTemp+"°");
         txtWeatherCode.setText(response.weather.get(0).description);
-        txtWind.setText(String.valueOf(response.wind.speed));
-        txtHumidity.setText(String.valueOf(response.main.humidity));
-        txtPressure.setText(String.valueOf(response.main.pressure));
+        txtWind.setText(String.valueOf(response.wind.speed)+"m/s");
+        txtHumidity.setText(String.valueOf(response.main.humidity)+"%");
+        txtPressure.setText(String.valueOf(response.main.pressure)+"hPa");
     }
 
     //convert temperature
