@@ -167,27 +167,268 @@
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:tabMode="fixed"
-        android:layout_margin="10dp">
+        android:layout_gravity="start"
+        app:tabMode="scrollable"
+        android:layout_margin="10dp"
+        app:tabContentStart="20dp"
+        android:id="@+id/dayTabs">
 
         <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Today"
+            android:text="Text"
             />
 
         <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Tomorrow"
+            android:text="Text"
             />
         <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Next 5 days"
+            android:text="Text"
+            />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="text"
+            />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="text"
             />
 
     </com.google.android.material.tabs.TabLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/forecastRecycler"
+        android:orientation="horizontal"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Temperatures"
+                android:textStyle="bold"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_temp_max"
+                    android:layout_margin="8dp"
+                    android:id="@+id/imgMax"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgMax"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Max temp"
+                    android:id="@+id/txtMax"
+                    />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_temp_min"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="15dp"
+                    android:id="@+id/imgMin"
+                    android:layout_toEndOf="@id/txtMax"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgMin"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Min temp"
+                    android:id="@+id/txtMin" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Atmospheric pressure"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_land"
+                    android:layout_margin="8dp"
+                    android:id="@+id/imgLand"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgLand"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Ground level"
+                    android:id="@+id/txtLand"
+                    />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_sea"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="15dp"
+                    android:id="@+id/imgSea"
+                    android:layout_toEndOf="@id/txtLand"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgSea"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Sea level"
+                    android:id="@+id/txtSea" />
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Wind"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_wind"
+                    android:layout_margin="8dp"
+                    android:id="@+id/imgSpeed"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgSpeed"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Speed"
+                    android:id="@+id/txtSpeed"
+                    />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_gust"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="15dp"
+                    android:id="@+id/imgGust"
+                    android:layout_toEndOf="@id/txtSpeed"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgGust"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Gust"
+                    android:id="@+id/txtGust" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_direction"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="15dp"
+                    android:id="@+id/imgDirection"
+                    android:layout_toEndOf="@id/txtGust"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgDirection"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Direction"
+                    android:id="@+id/txtDirection" />
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Visibility"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_visibility"
+                    android:layout_margin="8dp"
+                    android:id="@+id/imgVisibility"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgVisibility"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Visibility"
+                    android:id="@+id/txtVisibility"
+                    />
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Cloud cover"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_clouds"
+                    android:layout_margin="8dp"
+                    android:id="@+id/imgClouds"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/imgClouds"
+                    android:layout_margin="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="Clouds"
+                    android:id="@+id/txtClouds"
+                    />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

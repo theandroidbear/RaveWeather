@@ -50,10 +50,10 @@ public class RequestManager {
         });
     }
 
-    public void getForecastData(ForecastListener listener, String lat, String lon){
+    public void getForecastData(ForecastListener listener, String lat, String lon,String count){
         listener.onLoading(true);
         GetForecast getForecast = retrofit.create(GetForecast.class);
-        Call<ForecastResponse> call = getForecast.getForecastData(lat,lon,"cfe577b09f43deea2722462eea76e473");
+        Call<ForecastResponse> call = getForecast.getForecastData(lat,lon,"cfe577b09f43deea2722462eea76e473",count);
         call.enqueue(new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {

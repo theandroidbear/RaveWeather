@@ -11,6 +11,7 @@ public interface GetForecast {
     Call<ForecastResponse> getForecastData(
             @Query("lat") String lat ,
             @Query("lon") String lon,
-            @Query("appid") String appId
+            @Query("appid") String appId,
+            @Query("cnt") String count
     );
 }

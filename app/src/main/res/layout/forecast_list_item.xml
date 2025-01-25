@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="200dp"
+    style="@style/Widget.Material3.CardView.Filled"
+    android:layout_margin="8dp"
+    android:id="@+id/forecastCardView">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:id="@+id/imgForecast"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/imgForecast"
+            android:layout_marginBottom="8dp"
+            android:text="today date"
+            android:textStyle="bold"
+            android:id="@+id/txtForecastDate"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/txtForecastDate"
+            android:layout_marginBottom="8dp"
+            android:text="City"
+            android:textStyle="bold"
+            android:id="@+id/txtForecastCity"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/imgForecast"
+            android:layout_marginTop="8dp"
+            android:text="degrees"
+            android:id="@+id/txtForecastTemp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/txtForecastTemp"
+            android:layout_marginTop="8dp"
+            android:text="today date"
+            android:id="@+id/txtForecastDescription"/>
+
+
+    </RelativeLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

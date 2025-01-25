@@ -17,15 +17,15 @@ public class GetIcon {
                 return R.drawable.oned;
             case "01n":
                 return R.drawable.onen;
-            case "o2d":
+            case "02d":
                 return R.drawable.twod;
             case "02n":
                 return R.drawable.twon;
-            case "o3d":
+            case "03d":
                 return R.drawable.threed;
             case "03n":
                 return R.drawable.threen;
-            case "o4d":
+            case "04d":
                 return R.drawable.fourd;
             case "04n":
                 return R.drawable.fourn;
