@@ -26,12 +26,17 @@
             android:id="@+id/txtForecastDate"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_above="@id/txtForecastDate"
             android:layout_marginBottom="8dp"
             android:text="City"
+            android:textAlignment="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
             android:textStyle="bold"
             android:id="@+id/txtForecastCity"/>
 

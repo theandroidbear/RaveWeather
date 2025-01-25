@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter city name"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/enterCity"
+                app:startIconDrawable="@drawable/ic_search"
+                android:layout_margin="10dp"
+                android:hint="City name"
+                style="?attr/textInputFilledStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:text="Search"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:id="@+id/btnSearch"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/searchLayout">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:layout_margin="10dp"
+                    android:id="@+id/txtCitySearch"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:id="@+id/txtLat"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:id="@+id/txtLon"/>
+            </LinearLayout>
+
+        </LinearLayout>
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:id="@+id/progress_indicator"
+            android:visibility="invisible"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"/>
+    </RelativeLayout>
+
+</ScrollView>

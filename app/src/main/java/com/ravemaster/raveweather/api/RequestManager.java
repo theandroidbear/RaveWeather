@@ -2,12 +2,17 @@ package com.ravemaster.raveweather.api;
 
 import android.content.Context;
 
+import com.ravemaster.raveweather.api.getLocations.interfaces.GetLocation;
+import com.ravemaster.raveweather.api.getLocations.interfaces.LocationListener;
+import com.ravemaster.raveweather.api.getLocations.models.LocationsResponse;
 import com.ravemaster.raveweather.api.getWeather.interfaces.GetWeatherData;
 import com.ravemaster.raveweather.api.getWeather.interfaces.GetWeatherListener;
 import com.ravemaster.raveweather.api.getWeather.models.WeatherDataResponse;
 import com.ravemaster.raveweather.api.getforecast.interfaces.ForecastListener;
 import com.ravemaster.raveweather.api.getforecast.interfaces.GetForecast;
 import com.ravemaster.raveweather.api.getforecast.models.ForecastResponse;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,6 +29,11 @@ public class RequestManager {
 
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    Retrofit retrofit2 = new Retrofit.Builder()
+            .baseUrl("https://forward-reverse-geocoding.p.rapidapi.com/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -67,6 +77,29 @@ public class RequestManager {
 
             @Override
             public void onFailure(Call<ForecastResponse> call, Throwable throwable) {
+                listener.onLoading(false);
+                listener.onError(throwable.getMessage()+ " from onFailure");
+            }
+        });
+    }
+
+    public void getLocation(LocationListener listener, String city){
+        listener.onLoading(true);
+        GetLocation getLocation = retrofit2.create(GetLocation.class);
+        Call<ArrayList<LocationsResponse>> call = getLocation.location(city);
+        call.enqueue(new Callback<ArrayList<LocationsResponse>>() {
+            @Override
+            public void onResponse(Call<ArrayList<LocationsResponse>> call, Response<ArrayList<LocationsResponse>> response) {
+                listener.onLoading(false);
+                if (!response.isSuccessful()){
+                    listener.onError(String.valueOf(response.code())+" from onResponse");
+                    return;
+                }
+                listener.onResponse(response.body(), response.message());
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<LocationsResponse>> call, Throwable throwable) {
                 listener.onLoading(false);
                 listener.onError(throwable.getMessage()+ " from onFailure");
             }

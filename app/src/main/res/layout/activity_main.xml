@@ -15,7 +15,7 @@
         style="?attr/floatingActionButtonSmallStyle"
         android:layout_margin="8dp"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_more"
+        android:src="@drawable/ic_search"
         android:id="@+id/btnMore"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -1,13 +1,24 @@
 package com.ravemaster.raveweather.activities;
 
+import android.Manifest;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,11 +26,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.ravemaster.raveweather.GetIcon;
 import com.ravemaster.raveweather.R;
 import com.ravemaster.raveweather.adapters.ForecastAdapter;
 import com.ravemaster.raveweather.api.RequestManager;
+import com.ravemaster.raveweather.api.getLocations.interfaces.LocationListener;
+import com.ravemaster.raveweather.api.getLocations.models.LocationsResponse;
 import com.ravemaster.raveweather.api.getWeather.interfaces.GetWeatherListener;
 import com.ravemaster.raveweather.api.getWeather.models.WeatherDataResponse;
 import com.ravemaster.raveweather.api.getforecast.interfaces.ForecastListener;
@@ -34,6 +51,7 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,17 +61,37 @@ public class MainActivity extends AppCompatActivity {
     List<com.ravemaster.raveweather.api.getforecast.models.List> group1, group2, group3, group4, group5;
     ForecastResponse response1;
 
+    String cityName = "";
+    String latitude = "";
+    String longitude = "";
+    String name = "";
+    int selectedTabIndex = 0;
+
+    Dialog permissionsDialog,searchDialog;
+    Button request;
+
     //views
-    LinearLayout weatherLayout;
+    LinearLayout weatherLayout, searchLayout;
     LottieAnimationView lottie;
-    TextView txtCity, txtDate, txtTemperature, txtWeatherCode, txtWind, txtPressure, txtHumidity, txtMax, txtMin, txtSea, txtLand, txtSpeed, txtGust, txtDirection, txtVisibility, txtClouds;
+    TextView txtCity, txtDate, txtTemperature, txtWeatherCode, txtWind, txtPressure, txtHumidity, txtMax, txtMin, txtSea, txtLand, txtSpeed, txtGust, txtDirection, txtVisibility, txtClouds, city, lat, lon;
     ImageView imgWeather, imgWind, imgPressure, imgHumidity;
     SwipeRefreshLayout swipeRefreshLayout;
     ShimmerFrameLayout weatherPlaceHolder;
+    FloatingActionButton btnSearch;
+    Button search;
+    TextInputLayout enter;
+    EditText editText;
+    MaterialAlertDialogBuilder builder;
+    CircularProgressIndicator progressIndicator;
 
     TabLayout tabLayout;
 
     RecyclerView forecastRecycler;
+
+    String[] permissions = new String[]{
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
 
 
 
@@ -64,6 +102,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initViews();
         setTabTexts();
+        showSearchDialog();
+
+        if (hasPermissions()){
+            Toast.makeText(this, "All permissions granted", Toast.LENGTH_SHORT).show();
+        }else{
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+                    || shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)){
+                showRationaleDialog();
+            }else {
+                requestPermissionLauncher.launch(permissions);
+            }
+        }
+
         response1 = new ForecastResponse();
 
         group1 = new ArrayList<>();
@@ -74,24 +125,135 @@ public class MainActivity extends AppCompatActivity {
 
         //api calling
         requestManager = new RequestManager(this);
-        requestManager.getWeatherData(listener,"40.7128","-74.0060");
-        requestManager.getForecastData(listener2,"40.7128","-74.0060",getCount());
+        requestManager.getWeatherData(listener,"-1.2921","36.8219");
+        requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestManager.getWeatherData(listener,"40.7128","-74.0060");
-                requestManager.getForecastData(listener2,"40.7128","-74.0060",getCount());
                 group1.clear();
                 group2.clear();
                 group3.clear();
                 group4.clear();
                 group5.clear();
+                requestManager.getWeatherData(listener,"-1.2921","36.8219");
+                requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
             }
         });
         displayWeatherPerTab();
 
+        tabLayout.getTabAt(0).select();
 
+        btnSearch.setOnClickListener(v ->{
+            searchDialog.show();
+        });
+
+        search.setOnClickListener(view ->{
+            cityName = editText.getText().toString();
+            requestManager.getLocation(locationListener, cityName);
+        });
+
+
+    }
+
+    private void showSearchDialog(){
+        builder = new MaterialAlertDialogBuilder(MainActivity.this);
+        View view = LayoutInflater.from(this).inflate(R.layout.search,null);
+        city = view.findViewById(R.id.txtCitySearch);
+        lat = view.findViewById(R.id.txtLat);
+        lon = view.findViewById(R.id.txtLon);
+        progressIndicator = view.findViewById(R.id.progress_indicator);
+        searchLayout = view.findViewById(R.id.searchLayout);
+        TextInputLayout enter = view.findViewById(R.id.enterCity);
+        editText = enter.getEditText();
+        search = view.findViewById(R.id.btnSearch);
+        builder.setView(view)
+                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        searchDialog.dismiss();
+                    }
+                })
+                .setPositiveButton("View", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        group1.clear();
+                        group2.clear();
+                        group3.clear();
+                        group4.clear();
+                        group5.clear();
+                        requestManager.getWeatherData(listener,latitude,longitude);
+                        requestManager.getForecastData(listener2,latitude,longitude,getCount());
+                        searchDialog.dismiss();
+                    }
+                });
+        searchDialog = builder.create();
+    }
+
+    private void showRationaleDialog() {
+        permissionsDialog = new Dialog(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_request_permissions,null);
+        request = view.findViewById(R.id.btnRequestPermissions);
+        permissionsDialog.setContentView(view);
+        permissionsDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        permissionsDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_background));
+        permissionsDialog.setCancelable(false);
+        request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestPermissionLauncher.launch(permissions);
+                permissionsDialog.dismiss();
+            }
+        });
+        permissionsDialog.show();
+    }
+
+    private ActivityResultLauncher<String[]> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+        @Override
+        public void onActivityResult(Map<String, Boolean> o) {
+
+        }
+    });
+
+    private boolean hasPermissions(){
+        return
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+    }
+
+    //get location listener
+    private final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onResponse(ArrayList<LocationsResponse> responses, String message) {
+            searchLayout.setVisibility(View.VISIBLE);
+            showCityData(responses);
+        }
+
+        @Override
+        public void onError(String message) {
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onLoading(boolean isLoading) {
+            if (isLoading){
+                searchLayout.setVisibility(View.INVISIBLE);
+                progressIndicator.setVisibility(View.VISIBLE);
+            } else {
+                progressIndicator.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
+
+    private void showCityData(ArrayList<LocationsResponse> responses) {
+        name = responses.get(0).display_name;
+        latitude = responses.get(0).lat;
+        longitude = responses.get(0).lon;
+        city.setText("City: "+name);
+        city.setSelected(true);
+        lat.setText("Latitude: "+latitude);
+        lon.setText("Longitude: "+longitude);
     }
 
     //get weather data listener
@@ -103,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
             stopShimmer();
             showLayouts();
             showData(response);
+            tabLayout.getTabAt(0).select();
         }
 
         @Override
@@ -134,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
         public void onResponse(ForecastResponse response, String message) {
             showForecastMain(response);
             response1 = response;
+            tabLayout.getTabAt(0).select();
         }
 
         @Override
@@ -187,10 +351,13 @@ public class MainActivity extends AppCompatActivity {
     //data displayed via views here
     private void showData(WeatherDataResponse response) {
 
+        tabLayout.getTabAt(0).select();
+
         GetIcon getIcon = new GetIcon(MainActivity.this);
         imgWeather.setBackgroundResource(getIcon.getIcon(response.weather.get(0).icon));
 
         txtCity.setText(response.name);
+        txtCity.setSelected(true);
         txtDate.setText(getDate(response.dt));
         double Temp = getTemperature(response.main.temp);
         double maxTemp = getTemperature(response.main.temp_max);
@@ -216,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showForecastMain(ForecastResponse response) {
+        tabLayout.getTabAt(0).select();
         groupTimeStamps(response.list);
         forecastAdapter = new ForecastAdapter(MainActivity.this,group1,response);
         forecastRecycler.setAdapter(forecastAdapter);
@@ -236,6 +404,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                selectedTabIndex = tab.getPosition();
                 switch (tab.getPosition()){
                     case 0:
                         showForecast(group1);
@@ -404,6 +573,6 @@ public class MainActivity extends AppCompatActivity {
         weatherLayout = findViewById(R.id.weatherLayout);
         forecastRecycler = findViewById(R.id.forecastRecycler);
         tabLayout = findViewById(R.id.dayTabs);
-
+        btnSearch = findViewById(R.id.btnMore);
     }
 }

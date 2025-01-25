@@ -59,6 +59,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         holder.txtForecastDate.setText(getDate(forecastList.get(position).dt));
         holder.txtForecastDescription.setText(forecastList.get(position).weather.get(0).description);
         holder.txtCity.setText(response.city.name);
+        holder.txtCity.setSelected(true);
 
         holder.forecastCardView.setOnClickListener(new View.OnClickListener() {
             @Override
