@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
     public DBHelper(Context context) {
-        super(context, "DatabaseThree.db", null, 1);
+        super(context, "DatabaseFour.db", null, 1);
     }
 
     @Override
@@ -17,6 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table ModelOne(timestamp TEXT,cityname TEXT, date TEXT, icon TEXT, windspeed TEXT, temperature TEXT, pressure TEXT, humidity TEXT, description TEXT)");
         db.execSQL("create table ModelTwo(timestamptwo TEXT,maxtemp TEXT, mintemp TEXT, ground TEXT, sea TEXT, speed TEXT, gust TEXT, direction TEXT, visibility TEXT, clouds TEXT, name TEXT)");
         db.execSQL("create table ModelThree(groupOne TEXT, groupTwo TEXT, groupThree TEXT, groupFour TEXT, groupFive TEXT)");
+        db.execSQL("create table NameTable(namename TEXT)");
     }
 
     @Override
@@ -24,6 +25,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists ModelOne");
         db.execSQL("drop table if exists ModelTwo");
         db.execSQL("drop table if exists ModelThree");
+        db.execSQL("drop table if exists NameTable");
+
     }
 
     public boolean insertModelOne(String timeStamp,String cityName, String date, String icon, String temperature, String windSpeed, String pressure, String humidity, String description){
@@ -80,6 +83,20 @@ public class DBHelper extends SQLiteOpenHelper {
         return database.rawQuery("Select * from ModelOne",null);
     }
 
+    public boolean insertName(String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("namename", name);
+
+        long result = db.insert("NameTable", null, contentValues);
+        return result != 1;
+    }
+
+    public Cursor getName(){
+        SQLiteDatabase database = this.getWritableDatabase();
+        return database.rawQuery("Select * from NameTable",null);
+    }
+
     public Cursor getModelTwo(){
         SQLiteDatabase database = this.getWritableDatabase();
         return database.rawQuery("Select * from ModelTwo",null);
@@ -105,6 +122,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public Boolean deleteModelThree() {
         SQLiteDatabase DB = this.getWritableDatabase();
         long result = DB.delete("ModelThree", null, null);
+        return result != -1;
+    }
+
+    public Boolean deleteName() {
+        SQLiteDatabase DB = this.getWritableDatabase();
+        long result = DB.delete("NameTable", null, null);
         return result != -1;
     }
 }

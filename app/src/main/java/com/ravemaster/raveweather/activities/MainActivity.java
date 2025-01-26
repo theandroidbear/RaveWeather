@@ -241,6 +241,8 @@ public class MainActivity extends AppCompatActivity {
             showLayouts();
             showData(response);
             insertData(response);
+            deleteName();
+            insertName(response.name);
             tabLayout.getTabAt(0).select();
         }
 
@@ -461,7 +463,7 @@ public class MainActivity extends AppCompatActivity {
             showAnimation();
             hideLayouts();
         } else {
-            forecastAdapter.setName(nameCity);
+            forecastAdapter.setName(getName());
             forecastAdapter.setForecastList(list);
             forecastRecycler.setAdapter(forecastAdapter);
             forecastAdapter.notifyDataSetChanged();
@@ -542,7 +544,7 @@ public class MainActivity extends AppCompatActivity {
             hideLayouts();
             showAnimation();
         } else {
-            forecastAdapter.setName(nameCity);
+            forecastAdapter.setName(getName());
             forecastAdapter.setForecastList(group1);
             forecastRecycler.setAdapter(forecastAdapter);
             forecastAdapter.notifyDataSetChanged();
@@ -607,7 +609,7 @@ public class MainActivity extends AppCompatActivity {
     //display animations when internet available
     private void showSnackBar(){
         Snackbar snackbar = Snackbar.make(
-                layout,"Offline mode!", Snackbar.LENGTH_LONG
+                layout,"Please check your internet connection!", Snackbar.LENGTH_LONG
         );
         snackbar.show();
     }
@@ -734,6 +736,30 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         requestManager.getWeatherData(listener,"-1.2921","36.8219");
         requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
+    }
+
+    //insert name into database
+    private void insertName(String name){
+        boolean checkInsertName = helper.insertName(name);
+    }
+
+    //get name from database
+    private String getName(){
+        String name = null;
+        Cursor cursor = helper.getName();
+        if (cursor.getCount() == 0){
+
+        } else {
+            while (cursor.moveToNext()){
+                name = cursor.getString(0);
+            }
+        }
+        return name;
+    }
+
+    //delete name from database
+    private void deleteName(){
+        boolean delete = helper.deleteName();
     }
 
     //views initialized here
