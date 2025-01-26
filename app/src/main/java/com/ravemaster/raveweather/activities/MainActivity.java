@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                hideAnimation();
                 requestManager.getWeatherData(listener,"-1.2921","36.8219");
                 requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
             }
@@ -147,20 +148,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    }
-
-    private boolean isOnline(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null){
-            Network activeNetwork = connectivityManager.getActiveNetwork();
-            if (activeNetwork != null){
-                NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
-                return networkCapabilities != null &&
-                        (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-            }
-        }
-        return false;
     }
 
     private void showSearchDialog(){
@@ -305,7 +292,6 @@ public class MainActivity extends AppCompatActivity {
         ModelOne modelOne = null;
         ModelTwo modelTwo = null;
         if (cursor.getCount() == 0){
-            Toast.makeText(this, "ModelOne Empty", Toast.LENGTH_SHORT).show();
         } else {
             while (cursor.moveToNext()){
                 String timeStamp = cursor.getString(0);
@@ -321,7 +307,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (cursor2.getCount() == 0){
-            Toast.makeText(this, "ModelOne Empty", Toast.LENGTH_SHORT).show();
         } else {
             while (cursor2.moveToNext()){
                 String timeStamp = cursor2.getString(0);
@@ -342,28 +327,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showFromDb(ModelOne modelOne, ModelTwo modelTwo) {
-        tabLayout.getTabAt(0).select();
+        if (modelOne == null || modelTwo == null){
+            hideLayouts();
+            showAnimation();
+        } else{
+            hideAnimation();
+            tabLayout.getTabAt(0).select();
 
-        GetIcon getIcon = new GetIcon(MainActivity.this);
-        imgWeather.setBackgroundResource(getIcon.getIcon(modelOne.getIcon()));
+            GetIcon getIcon = new GetIcon(MainActivity.this);
+            imgWeather.setBackgroundResource(getIcon.getIcon(modelOne.getIcon()));
 
-        txtCity.setText(modelOne.getCityName());
-        txtCity.setSelected(true);
-        txtDate.setText(modelOne.getTimeStamp()+" (last updated)");
-        txtTemperature.setText(modelOne.getTemperature()+"°C");
-        txtMax.setText(modelTwo.getMaxTemp()+"°C (max)");
-        txtMin.setText(modelTwo.getMinTemp()+"°C (min)");
-        txtWeatherCode.setText(modelOne.getDescription());
-        txtWind.setText(modelOne.getWindSpeed()+" m/s");
-        txtSpeed.setText(modelTwo.getSpeed()+" m/s");
-        txtGust.setText(modelTwo.getGust()+" m/s");
-        txtDirection.setText(modelTwo.getDirection()+"°");
-        txtHumidity.setText(modelOne.getHumidity()+"%");
-        txtPressure.setText(modelOne.getPressure()+" hPa");
-        txtLand.setText(modelTwo.getGround()+" hPa (ground)");
-        txtSea.setText(modelTwo.getSea()+" hPa (sea)");
-        txtVisibility.setText(modelTwo.getVisibility()+" m");
-        txtClouds.setText(modelTwo.getClouds()+"%");
+            txtCity.setText(modelOne.getCityName());
+            txtCity.setSelected(true);
+            txtDate.setText(modelOne.getTimeStamp()+" (last updated)");
+            txtTemperature.setText(modelOne.getTemperature()+"°C");
+            txtMax.setText(modelTwo.getMaxTemp()+"°C (max)");
+            txtMin.setText(modelTwo.getMinTemp()+"°C (min)");
+            txtWeatherCode.setText(modelOne.getDescription());
+            txtWind.setText(modelOne.getWindSpeed()+" m/s");
+            txtSpeed.setText(modelTwo.getSpeed()+" m/s");
+            txtGust.setText(modelTwo.getGust()+" m/s");
+            txtDirection.setText(modelTwo.getDirection()+"°");
+            txtHumidity.setText(modelOne.getHumidity()+"%");
+            txtPressure.setText(modelOne.getPressure()+" hPa");
+            txtLand.setText(modelTwo.getGround()+" hPa (ground)");
+            txtSea.setText(modelTwo.getSea()+" hPa (sea)");
+            txtVisibility.setText(modelTwo.getVisibility()+" m");
+            txtClouds.setText(modelTwo.getClouds()+"%");
+        }
+
     }
 
     private void insertData(WeatherDataResponse response) {
@@ -429,6 +421,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onLoading(boolean isLoading) {
             if (isLoading){
+                hideAnimation();
 //                Toast.makeText(MainActivity.this, "Fetching", Toast.LENGTH_SHORT).show();
             } else {
                 swipeRefreshLayout.setRefreshing(false);
@@ -448,12 +441,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showForecast(List<com.ravemaster.raveweather.api.getforecast.models.List> list){
-        forecastAdapter.setName(nameCity);
-        forecastAdapter.setForecastList(list);
-        forecastRecycler.setAdapter(forecastAdapter);
-        forecastAdapter.notifyDataSetChanged();
-        forecastRecycler.setLayoutManager(new LinearLayoutManagerWrapper(MainActivity.this,LinearLayoutManager.HORIZONTAL,false));
-        forecastRecycler.setHasFixedSize(true);
+        if (list.isEmpty()){
+            showAnimation();
+            hideLayouts();
+        } else {
+            forecastAdapter.setName(nameCity);
+            forecastAdapter.setForecastList(list);
+            forecastRecycler.setAdapter(forecastAdapter);
+            forecastAdapter.notifyDataSetChanged();
+            forecastRecycler.setLayoutManager(new LinearLayoutManagerWrapper(MainActivity.this,LinearLayoutManager.HORIZONTAL,false));
+            forecastRecycler.setHasFixedSize(true);
+        }
     }
 
     private void displayWeatherPerTab(){
@@ -503,7 +501,6 @@ public class MainActivity extends AppCompatActivity {
         Type type = new TypeToken<List<com.ravemaster.raveweather.api.getforecast.models.List>>() {}.getType();
         Gson gson = new Gson();
          if (cursor.getCount() == 0){
-             Toast.makeText(this, "ModelThree Empty", Toast.LENGTH_SHORT).show();
          } else {
              while(cursor.moveToNext()){
                  s1 = cursor.getString(0);
@@ -522,12 +519,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showArraysFromDb(List<com.ravemaster.raveweather.api.getforecast.models.List> group1, List<com.ravemaster.raveweather.api.getforecast.models.List> group2, List<com.ravemaster.raveweather.api.getforecast.models.List> group3, List<com.ravemaster.raveweather.api.getforecast.models.List> group4, List<com.ravemaster.raveweather.api.getforecast.models.List> group5){
-        forecastAdapter.setName(nameCity);
-        forecastAdapter.setForecastList(group1);
-        forecastRecycler.setAdapter(forecastAdapter);
-        forecastAdapter.notifyDataSetChanged();
-        forecastRecycler.setLayoutManager(new LinearLayoutManagerWrapper(MainActivity.this,LinearLayoutManager.HORIZONTAL,false));
-        forecastRecycler.setHasFixedSize(true);
+        if (group1.isEmpty()){
+            hideLayouts();
+            showAnimation();
+        } else {
+            forecastAdapter.setName(nameCity);
+            forecastAdapter.setForecastList(group1);
+            forecastRecycler.setAdapter(forecastAdapter);
+            forecastAdapter.notifyDataSetChanged();
+            forecastRecycler.setLayoutManager(new LinearLayoutManagerWrapper(MainActivity.this,LinearLayoutManager.HORIZONTAL,false));
+            forecastRecycler.setHasFixedSize(true);
+        }
     }
 
     private void groupTimeStamps(List<com.ravemaster.raveweather.api.getforecast.models.List> list){
@@ -584,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
     //display animations when internet available
     private void showSnackBar(){
         Snackbar snackbar = Snackbar.make(
-                layout,"Please check your internect connection!", Snackbar.LENGTH_LONG
+                layout,"Offline mode!", Snackbar.LENGTH_LONG
         );
         snackbar.show();
     }
@@ -592,6 +594,11 @@ public class MainActivity extends AppCompatActivity {
     //hide animations when internet unavailable
     private void hideAnimation(){
         lottie.setVisibility(View.GONE);
+    }
+
+    private void showAnimation(){
+        lottie.setVisibility(View.VISIBLE);
+        lottie.animate();
     }
 
     //show shimmer effect when loading
@@ -687,6 +694,20 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(2).setText(days[2]);
         tabLayout.getTabAt(3).setText(days[3]);
         tabLayout.getTabAt(4).setText(days[4]);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        requestManager.getWeatherData(listener,"-1.2921","36.8219");
+        requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        requestManager.getWeatherData(listener,"-1.2921","36.8219");
+        requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
     }
 
     //views initialized here
