@@ -63,13 +63,12 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    //member objects
+    //declaration of various member objects used in the entire file
     RequestManager requestManager;
     ForecastAdapter forecastAdapter;
     List<com.ravemaster.raveweather.api.getforecast.models.List> group1, group2, group3, group4, group5;
     ForecastResponse response1;
     DBHelper helper;
-
     String cityName = "";
     String latitude = "";
     String longitude = "";
@@ -78,10 +77,9 @@ public class MainActivity extends AppCompatActivity {
     int selectedTabIndex = 0;
     boolean checkOffline = false;
 
+    // declaration of all view elements used throughout the file
     Dialog permissionsDialog,searchDialog;
     Button request;
-
-    //views
     LinearLayout weatherLayout, searchLayout;
     RelativeLayout layout;
     LottieAnimationView lottie;
@@ -95,9 +93,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editText;
     MaterialAlertDialogBuilder builder;
     CircularProgressIndicator progressIndicator;
-
     TabLayout tabLayout;
-
     RecyclerView forecastRecycler;
 
 
@@ -107,25 +103,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        //views initialized in this method
         initViews();
+
+        //texts displayed in the tabs are set using this method
         setTabTexts();
+
+        //method to create the searching cities dialog
         showSearchDialog();
 
+        //initialization of the member objects
         response1 = new ForecastResponse();
         helper = new DBHelper(MainActivity.this);
         forecastAdapter = new ForecastAdapter(MainActivity.this);
-
         group1 = new ArrayList<>();
         group2 = new ArrayList<>();
         group3 = new ArrayList<>();
         group4 = new ArrayList<>();
         group5 = new ArrayList<>();
 
-        //api calling
+        //calling weather and forecast endpoints
         requestManager = new RequestManager(this);
         requestManager.getWeatherData(listener,"-1.2921","36.8219");
         requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
 
+        //updating data and ui after swipe down to refresh event
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -134,14 +137,19 @@ public class MainActivity extends AppCompatActivity {
                 requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
             }
         });
+
+        //handle selection of tabs
         displayWeatherPerTab();
 
+        //resetting selected tab to the first
         tabLayout.getTabAt(0).select();
 
+        //button for showing the search dialog
         btnSearch.setOnClickListener(v ->{
             searchDialog.show();
         });
 
+        //button for calling geolocation endpoint
         search.setOnClickListener(view ->{
             cityName = editText.getText().toString();
             requestManager.getLocation(locationListener, cityName);
@@ -150,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //show dialog creating method
     private void showSearchDialog(){
         builder = new MaterialAlertDialogBuilder(MainActivity.this);
         View view = LayoutInflater.from(this).inflate(R.layout.search,null);
@@ -211,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //show data in the search dialog
     private void showCityData(ArrayList<LocationsResponse> responses) {
         name = responses.get(0).display_name;
         latitude = responses.get(0).lat;
@@ -258,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //data displayed via views here
+    //data displayed via views here when online
     private void showData(WeatherDataResponse response) {
 
         tabLayout.getTabAt(0).select();
@@ -286,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //getting weather data cached in db when offline
     private void getFromDb() {
         Cursor cursor = helper.getModelOne();
         Cursor cursor2 = helper.getModelTwo();
@@ -326,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
         showFromDb(modelOne,modelTwo);
     }
 
+    //showing data cached in db when offline
     private void showFromDb(ModelOne modelOne, ModelTwo modelTwo) {
         if (modelOne == null || modelTwo == null){
             hideLayouts();
@@ -358,6 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //cache data into db for offline purposes
     private void insertData(WeatherDataResponse response) {
 
         boolean clearModelOne = helper.deleteModelOne();
@@ -377,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //get time when data was cached
     private String getTimeStamps(){
         // Get the current date and time
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -430,6 +444,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //show data for the first day forecast
     private void showForecastMain(ForecastResponse response) {
         tabLayout.getTabAt(0).select();
         forecastAdapter.setForecastList(group1);
@@ -440,6 +455,7 @@ public class MainActivity extends AppCompatActivity {
         forecastRecycler.setHasFixedSize(true);
     }
 
+    //show data for all days forecast
     private void showForecast(List<com.ravemaster.raveweather.api.getforecast.models.List> list){
         if (list.isEmpty()){
             showAnimation();
@@ -454,6 +470,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //handle selection of tabs
     private void displayWeatherPerTab(){
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -491,6 +508,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //get cached forecast data from database when offline
     private void getArraysFromDb() {
         Cursor cursor = helper.getModelThree();
         String s1 = null;
@@ -518,6 +536,7 @@ public class MainActivity extends AppCompatActivity {
          showArraysFromDb(group1,group2,group3,group4,group5);
     }
 
+    //show cached forecast data from database when offline
     private void showArraysFromDb(List<com.ravemaster.raveweather.api.getforecast.models.List> group1, List<com.ravemaster.raveweather.api.getforecast.models.List> group2, List<com.ravemaster.raveweather.api.getforecast.models.List> group3, List<com.ravemaster.raveweather.api.getforecast.models.List> group4, List<com.ravemaster.raveweather.api.getforecast.models.List> group5){
         if (group1.isEmpty()){
             hideLayouts();
@@ -532,6 +551,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //group forecast data received from endpoint into five arrays for the five days
     private void groupTimeStamps(List<com.ravemaster.raveweather.api.getforecast.models.List> list){
         //get current time in milliseconds
         long currentTimestampMillis = System.currentTimeMillis();
@@ -570,6 +590,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //add forecast data into db for offline storage
     private void addToDb(List<com.ravemaster.raveweather.api.getforecast.models.List> group1, List<com.ravemaster.raveweather.api.getforecast.models.List> group2, List<com.ravemaster.raveweather.api.getforecast.models.List> group3, List<com.ravemaster.raveweather.api.getforecast.models.List> group4, List<com.ravemaster.raveweather.api.getforecast.models.List> group5) {
         Gson gson = new Gson();
         String s1 = gson.toJson(group1);
@@ -596,6 +617,7 @@ public class MainActivity extends AppCompatActivity {
         lottie.setVisibility(View.GONE);
     }
 
+    //show animations when offline
     private void showAnimation(){
         lottie.setVisibility(View.VISIBLE);
         lottie.animate();
@@ -648,6 +670,7 @@ public class MainActivity extends AppCompatActivity {
         return String.format("%s %s, %s", day, month, dayOfWeek);
     }
 
+    //get number of timestamps received from forecast data endpoint
     private String getCount(){
         long currentTimestampMillis = System.currentTimeMillis();
 
@@ -673,6 +696,7 @@ public class MainActivity extends AppCompatActivity {
         return String.valueOf(listSize);
     }
 
+    //set texts displayed on tabs
     private void setTabTexts(){
         // Get the current date
         LocalDate today = LocalDate.now();
@@ -696,6 +720,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(4).setText(days[4]);
     }
 
+    //refresh data when app is resumed
     @Override
     protected void onResume() {
         super.onResume();
@@ -703,6 +728,7 @@ public class MainActivity extends AppCompatActivity {
         requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
     }
 
+    //refresh data when activity is restarted
     @Override
     protected void onRestart() {
         super.onRestart();
