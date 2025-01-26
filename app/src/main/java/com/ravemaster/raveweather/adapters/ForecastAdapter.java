@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,28 +18,32 @@ import com.ravemaster.raveweather.api.getforecast.models.ForecastResponse;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Response;
 
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder> {
 
     private Context context;
-    private List<com.ravemaster.raveweather.api.getforecast.models.List> forecastList;
-    private ForecastResponse response;
+    private List<com.ravemaster.raveweather.api.getforecast.models.List> forecastList = new ArrayList<>();
+    private String name;
 
-    public ForecastAdapter(Context context, List<com.ravemaster.raveweather.api.getforecast.models.List> forecastList, ForecastResponse response) {
+    public ForecastAdapter(Context context, String name) {
         this.context = context;
         this.forecastList = forecastList;
-        this.response = response;
+        this.name = name;
     }
-    public ForecastAdapter(Context context, List<com.ravemaster.raveweather.api.getforecast.models.List> forecastList) {
+    public ForecastAdapter(Context context) {
         this.context = context;
-        this.forecastList = forecastList;
     }
 
-    public void setResponse(ForecastResponse response) {
-        this.response = response;
+    public void setForecastList(List<com.ravemaster.raveweather.api.getforecast.models.List> forecastList) {
+        this.forecastList = forecastList;
+        notifyDataSetChanged();
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @NonNull
@@ -58,7 +61,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         holder.txtForecastTemp.setText(formatedTemp+"°C");
         holder.txtForecastDate.setText(getDate(forecastList.get(position).dt));
         holder.txtForecastDescription.setText(forecastList.get(position).weather.get(0).description);
-        holder.txtCity.setText(response.city.name);
+        holder.txtCity.setText(name);
         holder.txtCity.setSelected(true);
 
         holder.forecastCardView.setOnClickListener(new View.OnClickListener() {
