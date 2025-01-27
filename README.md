@@ -87,25 +87,25 @@ https://forward-reverse-geocoding.p.rapidapi.com/v1/forward
 To install the project make sure you have the following dependencies.
 
 ```bash
-  implementation 'com.squareup.retrofit2:retrofit:{version}'
-  implementation 'com.squareup.retrofit2:converter-gson:{version}'
-  implementation 'com.squareup.okhttp3:okhttp:{version}'
-  implementation 'com.squareup.okhttp3:logging-interceptor:{version}'
+  implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+  implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+  implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.10'
+  implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10'
 ```
 ```bash
-  implementation 'com.airbnb.android:lottie:{version}'
+  implementation 'com.airbnb.android:lottie:6.6.2'
 ```
 ```bash
-  implementation 'com.github.bumptech.glide:glide:{version}'
+  implementation 'com.github.bumptech.glide:glide:4.16.0'
 ```
 ```bash
-  implementation 'com.facebook.shimmer:shimmer:{version}'
+  implementation 'com.facebook.shimmer:shimmer:0.5.0'
 ```
 ```bash
-  implementation 'androidx.swiperefreshlayout:swiperefreshlayout:{version}'
+  implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 ```
 ```bash
-  implementation 'androidx.multidex:multidex:{version}'
+  implementation 'androidx.multidex:multidex:2.0.1'
 ```
 
 Gradle version
