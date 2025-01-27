@@ -205,7 +205,9 @@ public class MainActivity extends AppCompatActivity {
         public void onError(String message) {
             checkOffline = true;
             if (message.contains("Unable to")){
-                showSnackBar();
+                showSnackBar("Please check your internet connection!");
+            } else {
+                showSnackBar("An unexpected error occurred, please try again later.");
             }
         }
 
@@ -250,11 +252,19 @@ public class MainActivity extends AppCompatActivity {
         public void onError(String message) {
             swipeRefreshLayout.setRefreshing(false);
             stopShimmer();
-            showLayouts();
-            showSnackBar();
             checkOffline = true;
             if (message.contains("Unable to")){
+                showSnackBar("Please check your internet connection!");
+                showLayouts();
                 getFromDb();
+            } else if(message.contains("Failed to")){
+                showSnackBar("Please check your internet connection!");
+                showLayouts();
+                getFromDb();
+            } else  {
+                hideLayouts();
+                showAnimation();
+                showSnackBar("An unexpected error occurred, please try again later.");
             }
         }
 
@@ -430,7 +440,14 @@ public class MainActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
             if (message.contains("Unable to")){
                 getArraysFromDb();
-                showSnackBar();
+                showSnackBar("Please check your internet connection!");
+            } else if(message.contains("failed to")) {
+                getArraysFromDb();
+                showSnackBar("Please check your internet connection!");
+            } else {
+                hideLayouts();
+                showAnimation();
+                showSnackBar("An unexpected error occurred, please try again later.");
             }
 
         }
@@ -607,9 +624,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //display animations when internet available
-    private void showSnackBar(){
+    private void showSnackBar(String message){
         Snackbar snackbar = Snackbar.make(
-                layout,"Please check your internet connection!", Snackbar.LENGTH_LONG
+                layout,message, Snackbar.LENGTH_LONG
         );
         snackbar.show();
     }
