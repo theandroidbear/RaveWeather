@@ -257,14 +257,14 @@ public class MainActivity extends AppCompatActivity {
                 showSnackBar("Please check your internet connection!");
                 showLayouts();
                 getFromDb();
-            } else if(message.contains("Failed to")){
+            } else if(message.contains("Failed to connect")){
                 showSnackBar("Please check your internet connection!");
                 showLayouts();
                 getFromDb();
             } else  {
                 hideLayouts();
                 showAnimation();
-                showSnackBar("An unexpected error occurred, please try again later.");
+                showSnackBar("Swipe down to refresh previously loaded data.");
             }
         }
 
@@ -447,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 hideLayouts();
                 showAnimation();
-                showSnackBar("An unexpected error occurred, please try again later.");
+                showSnackBar("Swipe down to refresh last previously data.");
             }
 
         }
