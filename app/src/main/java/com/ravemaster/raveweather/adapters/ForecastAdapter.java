@@ -27,14 +27,11 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     private Context context;
     private List<com.ravemaster.raveweather.api.getforecast.models.List> forecastList = new ArrayList<>();
     private String name;
+    private DayClickListener listener;
 
-    public ForecastAdapter(Context context, String name) {
+    public ForecastAdapter(Context context, DayClickListener listener) {
         this.context = context;
-        this.forecastList = forecastList;
-        this.name = name;
-    }
-    public ForecastAdapter(Context context) {
-        this.context = context;
+        this.listener = listener;
     }
 
     public void setForecastList(List<com.ravemaster.raveweather.api.getforecast.models.List> forecastList) {
@@ -67,7 +64,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         holder.forecastCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                listener.onDayClicked(forecastList.get(position));
             }
         });
 

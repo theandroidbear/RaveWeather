@@ -30,7 +30,8 @@
                 app:startIconDrawable="@drawable/ic_search"
                 android:layout_margin="10dp"
                 android:hint="City name"
-                style="?attr/textInputFilledStyle">
+                style="?attr/textInputFilledStyle"
+                app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"

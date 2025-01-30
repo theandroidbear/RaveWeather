@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -36,6 +37,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ravemaster.raveweather.GetIcon;
 import com.ravemaster.raveweather.R;
+import com.ravemaster.raveweather.adapters.DayClickListener;
 import com.ravemaster.raveweather.adapters.ForecastAdapter;
 import com.ravemaster.raveweather.adapters.LinearLayoutManagerWrapper;
 import com.ravemaster.raveweather.api.RequestManager;
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        SplashScreen.installSplashScreen(this);
         setContentView(R.layout.activity_main);
 
         //views initialized in this method
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         //initialization of the member objects
         response1 = new ForecastResponse();
         helper = new DBHelper(MainActivity.this);
-        forecastAdapter = new ForecastAdapter(MainActivity.this);
+        forecastAdapter = new ForecastAdapter(MainActivity.this,dayClickListener);
         group1 = new ArrayList<>();
         group2 = new ArrayList<>();
         group3 = new ArrayList<>();
@@ -305,6 +308,39 @@ public class MainActivity extends AppCompatActivity {
         txtSea.setText(String.valueOf(response.main.sea_level)+" hPa (sea)");
         txtVisibility.setText(String.valueOf(response.visibility)+" m");
         txtClouds.setText(String.valueOf(response.clouds.all)+"%");
+
+    }
+
+    private final DayClickListener dayClickListener = new DayClickListener() {
+        @Override
+        public void onDayClicked(com.ravemaster.raveweather.api.getforecast.models.List list) {
+            showDataWhenClick(list);
+        }
+    };
+
+    //data displayed via views here when online
+    private void showDataWhenClick(com.ravemaster.raveweather.api.getforecast.models.List list) {
+
+        GetIcon getIcon = new GetIcon(MainActivity.this);
+        imgWeather.setBackgroundResource(getIcon.getIcon(list.weather.get(0).icon));
+
+        txtCity.setText(getName());
+        txtCity.setSelected(true);
+        txtDate.setText(getDate(list.dt));
+        txtTemperature.setText(getTemperature(list.main.temp)+"°C");
+        txtMax.setText(getTemperature(list.main.temp_max)+"°C (max)");
+        txtMin.setText(getTemperature(list.main.temp_min)+"°C (min)");
+        txtWeatherCode.setText(list.weather.get(0).description);
+        txtWind.setText(String.valueOf(list.wind.speed)+" m/s");
+        txtSpeed.setText(String.valueOf(list.wind.speed)+" m/s");
+        txtGust.setText(String.valueOf(list.wind.speed)+" m/s");
+        txtDirection.setText(String.valueOf(list.wind.deg)+"°");
+        txtHumidity.setText(String.valueOf(list.main.humidity)+"%");
+        txtPressure.setText(String.valueOf(list.main.pressure)+" hPa");
+        txtLand.setText(String.valueOf(list.main.grnd_level)+" hPa (ground)");
+        txtSea.setText(String.valueOf(list.main.sea_level)+" hPa (sea)");
+        txtVisibility.setText(String.valueOf(list.visibility)+" m");
+        txtClouds.setText(String.valueOf(list.clouds.all)+"%");
 
     }
 
@@ -695,7 +731,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Convert to seconds if needed
         long currentTimestamp = currentTimestampMillis / 1000; // Current timestamp
-        ZoneId zoneId = ZoneId.of("Africa/Addis_Ababa"); // Specify the time zone (UTC)
+        ZoneId zoneId = ZoneId.of("Africa/Addis_Ababa"); // Specify the time zone
 
         // Convert the current timestamp to LocalDate
         Instant instant = Instant.ofEpochSecond(currentTimestamp);
