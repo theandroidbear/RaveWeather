@@ -18,7 +18,7 @@
         android:theme="@style/Theme.RaveWeather"
         tools:targetApi="31">
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".activities.SplashLaunchActivity"
             android:exported="true"
             android:theme="@style/Theme.RaveWeather.MySplash">
             <intent-filter>
