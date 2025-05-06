@@ -6,12 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.SplashLaunchActivity"
-    android:fitsSystemWindows="true">
-
-<!--    <ImageView-->
-<!--        android:layout_width="200dp"-->
-<!--        android:layout_height="200dp"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:src="@drawable/app_weather"/>-->
+    android:fitsSystemWindows="true"
+    style="@style/Theme.RaveWeather.MySplash">
 
 </RelativeLayout>

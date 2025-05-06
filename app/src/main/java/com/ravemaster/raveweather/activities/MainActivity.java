@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        EdgeToEdge.enable(this);
         SplashScreen.installSplashScreen(this);
         setContentView(R.layout.activity_main);
 
