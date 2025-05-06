@@ -51,6 +51,9 @@
         <item name="colorSurfaceContainerHigh">@color/light_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/light_theme_surfaceContainerHighest</item>
 
+        <item name="android:statusBarColor">@color/light_theme_surface</item>
+        <item name="android:navigationBarColor">@color/light_theme_surface</item>
+
     </style>
 
     <style name="Theme.RaveWeather" parent="Base.Theme.RaveWeather" />

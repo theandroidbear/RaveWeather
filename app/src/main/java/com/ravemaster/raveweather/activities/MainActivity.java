@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgWeather, imgWind, imgPressure, imgHumidity;
     SwipeRefreshLayout swipeRefreshLayout;
     ShimmerFrameLayout weatherPlaceHolder;
-    FloatingActionButton btnSearch;
+    MaterialButton btnSearch;
     Button search;
     TextInputLayout enter;
     EditText editText;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+//        EdgeToEdge.enable(this);
         SplashScreen.installSplashScreen(this);
         setContentView(R.layout.activity_main);
 
@@ -838,7 +839,7 @@ public class MainActivity extends AppCompatActivity {
         weatherLayout = findViewById(R.id.weatherLayout);
         forecastRecycler = findViewById(R.id.forecastRecycler);
         tabLayout = findViewById(R.id.dayTabs);
-        btnSearch = findViewById(R.id.btnMore);
+        btnSearch = findViewById(R.id.btnSearch);
         layout = findViewById(R.id.mainLayout);
     }
 }

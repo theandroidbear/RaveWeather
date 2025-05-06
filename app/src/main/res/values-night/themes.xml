@@ -51,5 +51,8 @@
         <item name="colorSurfaceContainerHigh">@color/dark_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/dark_theme_surfaceContainerHighest</item>
 
+        <item name="android:statusBarColor">@color/dark_theme_surface</item>
+        <item name="android:navigationBarColor">@color/dark_theme_surface</item>
+
     </style>
 </resources>
