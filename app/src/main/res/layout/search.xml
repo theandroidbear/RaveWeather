@@ -40,19 +40,20 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:text="Search"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:id="@+id/btnSearch"/>
+                android:id="@+id/btnSearchCity"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:visibility="gone"
                 android:id="@+id/searchLayout">
                 <TextView
                     android:layout_width="100dp"
@@ -82,13 +83,35 @@
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:id="@+id/txtLon"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:text="View"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_margin="5dp"
+                        android:id="@+id/btnDialogView"/>
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:text="Dismiss"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toStartOf="@id/btnDialogView"
+                        android:layout_margin="5dp"
+                        android:id="@+id/btnDialogDismiss"/>
+                </RelativeLayout>
             </LinearLayout>
 
         </LinearLayout>
-        <com.google.android.material.progressindicator.CircularProgressIndicator
+        <com.google.android.material.loadingindicator.LoadingIndicator
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminate="true"
             android:id="@+id/progress_indicator"
             android:visibility="invisible"
             android:layout_centerHorizontal="true"

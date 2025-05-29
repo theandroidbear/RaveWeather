@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 public interface GetLocation {
     @GET("forward")
     @Headers({
-            "x-rapidapi-key: 7e3d2f10bdmsh70e6fefa71835adp16c240jsnb41f1b9c1073",
+            "x-rapidapi-key: 3179c2d1b2msh5a5901fddaf61c0p1596ddjsn5068b30a6a26",
             "x-rapidapi-host: forward-reverse-geocoding.p.rapidapi.com"
     })
     Call<ArrayList<LocationsResponse>> location(

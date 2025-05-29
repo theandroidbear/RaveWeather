@@ -1,5 +1,7 @@
 package com.ravemaster.raveweather.activities;
 
+import static android.view.View.GONE;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -25,6 +27,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.loadingindicator.LoadingIndicator;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -85,12 +88,12 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgWeather, imgWind, imgPressure, imgHumidity;
     SwipeRefreshLayout swipeRefreshLayout;
     ShimmerFrameLayout weatherPlaceHolder;
-    MaterialButton btnSearch;
-    Button search;
+    MaterialButton btnSearch,btnView,dismiss;
+    MaterialButton search;
     TextInputLayout enter;
     EditText editText;
     MaterialAlertDialogBuilder builder;
-    CircularProgressIndicator progressIndicator;
+    LoadingIndicator progressIndicator;
     TabLayout tabLayout;
     RecyclerView forecastRecycler;
 
@@ -148,11 +151,59 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //button for calling geolocation endpoint
-        search.setOnClickListener(view ->{
+        search.setOnClickListener(view1 ->{
             cityName = editText.getText().toString();
-            requestManager.getLocation(locationListener, cityName);
-        });
+            requestManager.getLocation(new LocationListener() {
+                @Override
+                public void onResponse(ArrayList<LocationsResponse> responses, String message) {
+                    if (!responses.isEmpty()){
+                        searchLayout.setVisibility(View.VISIBLE);
+                        showCityData(responses);
+                    }
+                }
 
+                @Override
+                public void onError(String message) {
+                    checkOffline = true;
+                    if (message.contains("Unable to")){
+                        showSnackBar("Please check your internet connection!");
+                    } else {
+                        showSnackBar("An unexpected error occurred, please try again later.");
+                    }
+                }
+
+                @Override
+                public void onLoading(boolean isLoading) {
+                    if (isLoading){
+                        searchLayout.setVisibility(View.INVISIBLE);
+                        progressIndicator.setVisibility(View.VISIBLE);
+                    } else {
+                        progressIndicator.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }, cityName);
+        });
+        btnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                group1.clear();
+                group2.clear();
+                group3.clear();
+                group4.clear();
+                group5.clear();
+                requestManager.getWeatherData(listener,latitude,longitude);
+                requestManager.getForecastData(listener2,latitude,longitude,getCount());
+                searchLayout.setVisibility(GONE);
+                searchDialog.dismiss();
+            }
+        });
+        dismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchLayout.setVisibility(GONE);
+                searchDialog.dismiss();
+            }
+        });
 
     }
 
@@ -167,27 +218,11 @@ public class MainActivity extends AppCompatActivity {
         searchLayout = view.findViewById(R.id.searchLayout);
         TextInputLayout enter = view.findViewById(R.id.enterCity);
         editText = enter.getEditText();
-        search = view.findViewById(R.id.btnSearch);
-        builder.setView(view)
-                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        searchDialog.dismiss();
-                    }
-                })
-                .setPositiveButton("View", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        group1.clear();
-                        group2.clear();
-                        group3.clear();
-                        group4.clear();
-                        group5.clear();
-                        requestManager.getWeatherData(listener,latitude,longitude);
-                        requestManager.getForecastData(listener2,latitude,longitude,getCount());
-                        searchDialog.dismiss();
-                    }
-                });
+        search = view.findViewById(R.id.btnSearchCity);
+        btnView = view.findViewById(R.id.btnDialogView);
+        dismiss = view.findViewById(R.id.btnDialogDismiss);
+        builder.setView(view);
+
         searchDialog = builder.create();
     }
 
@@ -195,28 +230,17 @@ public class MainActivity extends AppCompatActivity {
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onResponse(ArrayList<LocationsResponse> responses, String message) {
-            searchLayout.setVisibility(View.VISIBLE);
-            showCityData(responses);
+
         }
 
         @Override
         public void onError(String message) {
-            checkOffline = true;
-            if (message.contains("Unable to")){
-                showSnackBar("Please check your internet connection!");
-            } else {
-                showSnackBar("An unexpected error occurred, please try again later.");
-            }
+
         }
 
         @Override
         public void onLoading(boolean isLoading) {
-            if (isLoading){
-                searchLayout.setVisibility(View.INVISIBLE);
-                progressIndicator.setVisibility(View.VISIBLE);
-            } else {
-                progressIndicator.setVisibility(View.INVISIBLE);
-            }
+
         }
     };
 
@@ -664,7 +688,7 @@ public class MainActivity extends AppCompatActivity {
 
     //hide animations when internet unavailable
     private void hideAnimation(){
-        lottie.setVisibility(View.GONE);
+        lottie.setVisibility(GONE);
     }
 
     //show animations when offline
@@ -682,7 +706,7 @@ public class MainActivity extends AppCompatActivity {
     //hide shimmer effect when finished loading
     private void stopShimmer(){
         weatherPlaceHolder.stopShimmer();
-        weatherPlaceHolder.setVisibility(View.GONE);
+        weatherPlaceHolder.setVisibility(GONE);
     }
 
     //show content when loading finished
@@ -692,7 +716,7 @@ public class MainActivity extends AppCompatActivity {
 
     //hide content when offline or loading
     private void hideLayouts(){
-        weatherLayout.setVisibility(View.GONE);
+        weatherLayout.setVisibility(GONE);
     }
 
     //convert temperature
