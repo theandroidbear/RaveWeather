@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.swiperefresh)
     implementation(libs.multidex)
 
+    implementation(libs.location.gms)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

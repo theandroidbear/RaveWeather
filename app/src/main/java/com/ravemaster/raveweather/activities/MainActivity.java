@@ -2,8 +2,10 @@ package com.ravemaster.raveweather.activities;
 
 import static android.view.View.GONE;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,8 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -59,8 +65,10 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,8 +87,7 @@ public class MainActivity extends AppCompatActivity {
     boolean checkOffline = false;
 
     // declaration of all view elements used throughout the file
-    Dialog permissionsDialog,searchDialog;
-    Button request;
+    Dialog searchDialog;
     LinearLayout weatherLayout, searchLayout;
     RelativeLayout layout;
     LottieAnimationView lottie;
@@ -90,12 +97,20 @@ public class MainActivity extends AppCompatActivity {
     ShimmerFrameLayout weatherPlaceHolder;
     MaterialButton btnSearch,btnView,dismiss;
     MaterialButton search;
-    TextInputLayout enter;
     EditText editText;
     MaterialAlertDialogBuilder builder;
     LoadingIndicator progressIndicator;
     TabLayout tabLayout;
     RecyclerView forecastRecycler;
+
+    FloatingActionButton getLocation;
+
+    LocationManager locationManager;
+
+    String[] permissions = new String[]{
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
 
 
 
@@ -107,6 +122,23 @@ public class MainActivity extends AppCompatActivity {
 
         //views initialized in this method
         initViews();
+
+        locationManager = new LocationManager(MainActivity.this);
+
+        if (hasPermissions()){
+            locationManager.getLocation(coordinateInterface);
+        }else{
+            if (shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) ||shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) || shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)){
+                Toast.makeText(this, "You need to grant permissions for app to work.", Toast.LENGTH_SHORT).show();
+            }else {
+                hideLayouts();
+                requestPermissionLauncher.launch(permissions);
+            }
+        }
+
+        getLocation.setOnClickListener(v->{
+            locationManager.getLocation(coordinateInterface);
+        });
 
         //texts displayed in the tabs are set using this method
         setTabTexts();
@@ -126,16 +158,13 @@ public class MainActivity extends AppCompatActivity {
 
         //calling weather and forecast endpoints
         requestManager = new RequestManager(this);
-        requestManager.getWeatherData(listener,"-1.2921","36.8219");
-        requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
 
         //updating data and ui after swipe down to refresh event
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 hideAnimation();
-                requestManager.getWeatherData(listener,"-1.2921","36.8219");
-                requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
+                locationManager.getLocation(coordinateInterface);
             }
         });
 
@@ -207,7 +236,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //show dialog creating method
+    private final CoordinateInterface coordinateInterface = new CoordinateInterface() {
+        @Override
+        public void onSuccess(Map<String, Double> coordinates) {
+            String latitude = String.valueOf(coordinates.get("Latitude"));
+            String longitude = String.valueOf(coordinates.get("Longitude"));
+            requestManager.getWeatherData(listener,latitude,longitude);
+            requestManager.getForecastData(listener2,latitude,longitude,getCount());
+        }
+
+        @Override
+        public void onFailure(String message) {
+            hideLayouts();
+            Toast.makeText(MainActivity.this, "Please allow location permissions.", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private ActivityResultLauncher<String[]> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+        @Override
+        public void onActivityResult(Map<String, Boolean> o) {
+            locationManager.getLocation(coordinateInterface);
+        }
+    });
+
+    private boolean hasPermissions(){
+        return
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+    }
     private void showSearchDialog(){
         builder = new MaterialAlertDialogBuilder(MainActivity.this);
         View view = LayoutInflater.from(this).inflate(R.layout.search,null);
@@ -226,23 +283,6 @@ public class MainActivity extends AppCompatActivity {
         searchDialog = builder.create();
     }
 
-    //get location listener
-    private final LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onResponse(ArrayList<LocationsResponse> responses, String message) {
-
-        }
-
-        @Override
-        public void onError(String message) {
-
-        }
-
-        @Override
-        public void onLoading(boolean isLoading) {
-
-        }
-    };
 
     //show data in the search dialog
     private void showCityData(ArrayList<LocationsResponse> responses) {
@@ -798,16 +838,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        requestManager.getWeatherData(listener,"-1.2921","36.8219");
-        requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
+        locationManager.getLocation(coordinateInterface);
     }
 
     //refresh data when activity is restarted
     @Override
     protected void onRestart() {
         super.onRestart();
-        requestManager.getWeatherData(listener,"-1.2921","36.8219");
-        requestManager.getForecastData(listener2,"-1.2921","36.8219",getCount());
+        locationManager.getLocation(coordinateInterface);
     }
 
     //insert name into database
@@ -864,5 +902,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.dayTabs);
         btnSearch = findViewById(R.id.btnSearch);
         layout = findViewById(R.id.mainLayout);
+        getLocation = findViewById(R.id.getLocation);
     }
 }

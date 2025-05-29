@@ -25,6 +25,8 @@ swipeRefreshVersion = "1.1.0"
 
 multidexVersion = "2.0.1"
 
+locationVersion = "21.3.0"
+
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -48,6 +50,8 @@ splashscreen = { group = "androidx.core", name = "core-splashscreen", version.re
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottieVersion" }
 
 swiperefresh = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshVersion" }
+
+location-gms = {group = "com.google.android.gms",name = "play-services-location", version.ref = "locationVersion"}
 
 multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidexVersion" }
 
